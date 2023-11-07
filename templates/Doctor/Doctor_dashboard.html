@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            background-color: gray;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        table {
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .btn-container button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn-container button.accepted {
+            background-color: #28a745;
+        }
+
+        .btn-container button.rejected {
+            background-color: #dc3545;
+        }
+
+        .btn-container button.approved {
+            background-color: #28a745;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    </style>
+    <script>
+        // JavaScript function to fetch and populate appointments
+        function fetchAppointments() {
+            // Get the doctor's name from the session
+            var doctorName = "{{ session['doctor_username'] }}"; // Access the stored doctor's username
+
+            // Fetch available appointments
+            fetch("/get_available_appointments?doctor_name=" + doctorName)
+                .then(response => response.json())
+                .then(data => {
+                    // Access the data and populate the table
+                    var tableBody = document.querySelector("table tbody");
+
+
+                    tableBody.innerHTML = "";
+
+                    data.forEach(appointment => {
+                        var row = tableBody.insertRow();
+                        var doctorNameCell = row.insertCell(0);
+                        var patientNameCell = row.insertCell(1);
+                        var symptomsCell = row.insertCell(2);
+                        var dateCell = row.insertCell(3);
+                        var actionsCell = row.insertCell(4);
+
+                        doctorNameCell.textContent = doctorName; // Display the doctor's name
+                        patientNameCell.textContent = appointment.patient_name;
+                        symptomsCell.textContent = appointment.symptoms;
+                        dateCell.textContent = appointment.appointment_date;
+                        var recommendMedicineButton = document.createElement("button");
+                        recommendMedicineButton.textContent = "Recommended Medicine: " + appointment.recommended_medicine + " - Click to Approve";
+                        recommendMedicineButton.addEventListener("click", function () {
+                            // Handle logic to approve the medicine
+                            actionsCell.removeChild(recommendMedicineButton);
+                            var approveButton = document.createElement("button");
+                            approveButton.textContent = "Approved";
+                            approveButton.classList.add("accepted");
+                            approveButton.classList.add("approved");
+                            approveButton.disabled = true;
+                            actionsCell.appendChild(approveButton);
+                        });
+
+                        actionsCell.appendChild(recommendMedicineButton);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching appointments:", error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome, Doctor! {{ session['doctor_username'] }}</h1>
+    <p>Manage your appointments and provide the best Medicine Recommendation.</p>
+     <a href="/doctor_logout" style="float: right; margin: 10px;">Logout</a>
+    <div class="btn-container">
+        <button onclick="fetchAppointments()">Available Appointments</button>
+    </div>
+
+    <!-- Display available appointments in a table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Patient Name</th>
+                <th>Symptoms</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Appointments -->
+        </tbody>
+    </table>
+</body>
+</html>

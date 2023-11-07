@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Landing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            background-color: #003366; /* Deep blue background color */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            color: #fff; /* Text color */
+        }
+        h1 {
+            color: #fff; /* Heading text color */
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff; /* Blue background color for "Register" button */
+            border: 2px solid #0056b3;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Hover color */
+        }
+        .btn-success {
+            background-color: #28a745; /* Green background color for "Login" button */
+            border: 2px solid #1e7e34;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34; /* Hover color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Admin!</h1>
+        <p>Choose an option:</p>
+        <a href="/admin_register" class="btn btn-primary">Register</a>
+        <a href="/admin_login" class="btn btn-success">Login</a>
+    </div>
+</body>
+</html>

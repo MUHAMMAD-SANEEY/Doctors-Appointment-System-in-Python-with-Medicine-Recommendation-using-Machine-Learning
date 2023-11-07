@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration</title>
+    <style>
+        /* Style for the registration page */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        select,
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Patient Registration</h1>
+    <form method="POST" action="/patient">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <label for="symptoms">Symptoms:</label>
+        <select id="symptoms" name="symptoms" required>
+            <option value="" disabled selected>Select a symptom</option>
+            <option value="Fever">Fever|Cough|SoreThroat|Runny</option>
+            <option value="Cough">FrequentUrination|Fatigue|BlurredVision|ExcessiveThirst</option>
+            <option value="Headache">Headache|Dizziness|ChestPain|ShortnessOfBreath</option>
+            <option value="Sore throat">Wheezing|ChestTightness|Coughing|ShortnessOfBreath|IncreasedMucusProduction</option>
+            <option value="Fatigue">Fatigue|SlowWoundHealing|FrequentUrination(polyuria)</option>
+        </select>
+
+        <input type="submit" value="Register">
+         <p>Already registered? <a href="/patient_login">Log in here</a></p>
+    </form>
+</body>
+</html>

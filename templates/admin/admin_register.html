@@ -1,0 +1,60 @@
+<!-- templates/admin/admin_register.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Registration</title>
+    <style>
+        body {
+            background-color: #3498db; /* Blue background color */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            color: #fff; /* Text color */
+        }
+        h1 {
+            color: #fff; /* Heading text color */
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #0074D9; /* Blue background color for "Register" button */
+            border: 2px solid #0056b3;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Hover color */
+        }
+        .error {
+            color: #e74c3c; /* Red color for error messages */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Registration</h1>
+        <form method="POST" action="/submit_admin_registration">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        {% if registration_error %}
+            <p class="error">{{ registration_error }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

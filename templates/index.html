@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Doctors Management">
+    <meta name="keywords" content="dashboard, doctors management">
+    <title>Doctors Management</title>
+    <style>
+        /* Styles for header and buttons */
+        .header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .dashboard-element {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 5px 10px;
+            background-color: #ff6347;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        /* Style for the footer */
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Doctors Management</h1>
+            <a class="dashboard-element" href="#" id="dashboard-element">Dashboard</a>
+            <a class="dashboard-element" href="#" id="available-doctors-element">Available Doctors</a>
+            <a class="dashboard-element" href="#" id="registered-patients-element">Registered Patients</a>
+            <a class="dashboard-element" href="#" id="available-appointments-element">Available Appointments</a>
+            <a class="dashboard-element" href="/logout"> Log Out</a>
+        </div>
+
+        <div class="content" id="dashboard-content">
+            <!-- Data will be displayed here based on button clicks -->
+        </div>
+
+        <div class="footer">
+            Doctors Management System By Mohammed Sani Mohammed | Mouhammad Ali Hammad | Isaac Isiko
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch and update dashboard content based on button clicks
+        function fetchAndUpdateData(buttonId) {
+            // logic to fetch data from  application
+            let fetchDataUrl = '';
+
+            if (buttonId === "available-doctors-element") {
+                fetchDataUrl = '/get_all_doctors';
+            } else if (buttonId === "registered-patients-element") {
+                fetchDataUrl = '/get_registered_patients';
+            } else if (buttonId === "available-appointments-element") {
+                fetchDataUrl = '/get_available_appointments';
+            } else {
+
+
+                return;
+            }
+
+            fetch(fetchDataUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Update the dashboard content with the fetched data
+                    const dashboardContent = document.getElementById("dashboard-content");
+                    dashboardContent.innerHTML = ""; // Clear previous content
+
+                    if (data.length > 0) {
+                        const table = document.createElement("table");
+                        table.classList.add("table", "table-striped");
+                        const tableBody = document.createElement("tbody");
+
+                        if (buttonId === "available-doctors-element") {
+
+
+                            // Create table rows and add "Add" buttons
+                            data.forEach(doctor => {
+                                const row = tableBody.insertRow();
+                                const nameCell = row.insertCell(0);
+                                const passwordCell = row.insertCell(1);
+                                const specializationCell = row.insertCell(2);
+                                nameCell.innerHTML = doctor.name;
+                                passwordCell.innerHTML = doctor.password;
+                                specializationCell.innerHTML = doctor.specialization;
+                                addDeleteAndAddButtons(row, doctor.id, 'doctor');
+                            });
+                        } else if (buttonId === "registered-patients-element") {
+
+
+                            // Create table rows and add "Add" buttons
+                            data.forEach(patient => {
+                                const row = tableBody.insertRow();
+                                const nameCell = row.insertCell(0);
+                                const emailCell = row.insertCell(1);
+                                const passwordCell = row.insertCell(2);
+                                const symptomsCell = row.insertCell(3);
+                                nameCell.innerHTML = patient.name;
+                                emailCell.innerHTML = patient.email;
+                                passwordCell.innerHTML = patient.password;
+                                symptomsCell.innerHTML = patient.symptoms;
+                                addDeleteAndAddButtons(row, patient.id, 'patient');
+                            });
+                        } else if (buttonId === "available-appointments-element") {
+
+
+                            // Create table rows and add "Add" buttons
+                            data.forEach(appointment => {
+                                const row = tableBody.insertRow();
+                                const patientNameCell = row.insertCell(0);
+                                const symptomsCell = row.insertCell(1);
+                                const doctorNameCell = row.insertCell(2);
+                                const dateCell = row.insertCell(3);
+                                patientNameCell.innerHTML = appointment.patient_name;
+                                symptomsCell.innerHTML = appointment.symptoms;
+                                doctorNameCell.innerHTML = appointment.doctor_name;
+                                dateCell.innerHTML = appointment.appointment_date;
+                                addDeleteAndAddButtons(row, appointment.id, 'appointment');
+                            });
+                        }
+
+                        table.appendChild(tableBody);
+                        dashboardContent.appendChild(table);
+                    } else {
+                        dashboardContent.textContent = "No records found.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+        }
+
+        // Function to add "Delete" and "Add" buttons to a table row
+        function addDeleteAndAddButtons(row, recordId, recordType) {
+            const deleteCell = row.insertCell(-1);
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.classList.add("btn", "btn-danger");
+            deleteButton.addEventListener("click", function () {
+                deleteRecord(recordId, recordType);
+                row.remove();
+            });
+            deleteCell.appendChild(deleteButton);
+
+            const addCell = row.insertCell(-1);
+            const addButton = document.createElement("button");
+            addButton.textContent = "Add";
+            addButton.classList.add("btn", "btn-primary");
+            addButton.addEventListener("click", function () {
+                redirectToRegistrationPage(recordType);
+            });
+            addCell.appendChild(addButton);
+        }
+
+        // Function to delete a record
+        function deleteRecord(recordId, recordType) {
+            // Implement the logic to delete the corresponding record
+            fetch(`/delete_record/${recordId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    // Record deleted
+                } else {
+                    console.error("Error deleting record. Status: ", response.status);
+                }
+            })
+            .catch(error => {
+                console.error("Error deleting record:", error);
+            });
+        }
+
+        // Function to redirect to the appropriate registration page
+        function redirectToRegistrationPage(recordType) {
+            if (recordType === 'doctor') {
+                // Redirect to doctor registration page
+                window.location.href = '/doctor_register';
+            } else if (recordType === 'patient') {
+                // Redirect to patient registration page
+                window.location.href = '/patient';
+            } else if (recordType === 'appointment') {
+                // Redirect to patient dashboard when adding an appointment
+                window.location.href = '/patient_dashboard';
+            }
+
+        }
+
+        // Event listeners for dashboard elements
+        document.getElementById("dashboard-element").addEventListener("click", function () {
+            fetchAndUpdateData(this.id);
+        });
+
+        document.getElementById("available-doctors-element").addEventListener("click", function () {
+            fetchAndUpdateData(this.id);
+        });
+
+        document.getElementById("registered-patients-element").addEventListener("click", function () {
+            fetchAndUpdateData(this.id);
+        });
+
+        document.getElementById("available-appointments-element").addEventListener("click", function () {
+            fetchAndUpdateData(this.id);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <style>
+        /* Style for the appointment booking page */
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+            padding-top: 30px;
+        }
+
+        .booking-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .doctor-list {
+            margin-top: 20px;
+        }
+
+        .input-container {
+            margin-bottom: 10px;
+        }
+
+        .book-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .book-button:hover {
+            background-color: #0056b3;
+        }
+
+        #appointment-result {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book an Appointment</h1>
+    <div class="booking-content">
+        <div class="doctor-list">
+            <label for="doctor">Select a Doctor:</label><br>
+            <select name="doctor" id="doctor"></select>
+        </div>
+        <div class="input-container">
+            <label for="patientName">Your Name:</label><br>
+            <input type="text" name="patientName" id="patientName">
+        </div>
+        <div class="input-container">
+            <label>Symptoms:</label><br>
+            <input type="checkbox" name="symptoms" value="Fever"> Fever<br>
+            <input type="checkbox" name="symptoms" value="Cough"> Cough<br>
+            <input type="checkbox" name="symptoms" value="SoreThroat"> Sore Throat<br>
+            <input type="checkbox" name="symptoms" value="RunnyNose"> Runny Nose<br>
+            <input type="checkbox" name="symptoms" value="FrequentUrination"> Frequent Urination<br>
+            <input type="checkbox" name="symptoms" value="Fatigue"> Fatigue<br>
+            <input type="checkbox" name="symptoms" value="BlurredVision"> Blurred Vision<br>
+            <input type="checkbox" name="symptoms" value="ExcessiveThirst"> Excessive Thirst<br>
+            <input type="checkbox" name="symptoms" value="Headache"> Headache<br>
+            <input type="checkbox" name="symptoms" value="Dizziness"> Dizziness<br>
+            <input type="checkbox" name="symptoms" value="ChestPain"> Chest Pain<br>
+            <input type="checkbox" name="symptoms" value="ShortnessOfBreath"> Shortness of Breath<br>
+            <input type="checkbox" name="symptoms" value="Wheezing"> Wheezing<br>
+            <input type="checkbox" name="symptoms" value="ChestTightness"> Chest Tightness<br>
+            <input type="checkbox" name="symptoms" value="Coughing"> Coughing<br>
+            <input type="checkbox" name="symptoms" value="IncreasedMucusProduction"> Increased Mucus Production<br>
+            <input type="checkbox" name="symptoms" value="SlowWoundHealing"> Slow Wound Healing<br>
+            <input type="checkbox" name="symptoms" value="polyuria"> Polyuria<br>
+            <!-- Add more checkboxes for other symptoms -->
+        </div>
+        <div class="button-container">
+            <button class="book-button">Book Now</button>
+        </div>
+        <div id="appointment-result" style="display: none;">
+            <h2>Appointment Details:</h2>
+            <p><strong>Disease:</strong> <span id="disease"></span></p>
+            <p><strong>Recommended Medicine:</strong> <span id="recommended-medicine"></span></p>
+        </div>
+    </div>
+    <script>
+        // Fetch and populate the list of registered doctors from the server
+        fetch('/get_registered_doctors')
+            .then(response => response.json())
+            .then(data => {
+                const doctorDropdown = document.getElementById('doctor');
+                data.forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.name;
+                    option.textContent = `${doctor.name} - ${doctor.specialization}`;
+                    doctorDropdown.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching doctor data:', error);
+            });
+
+        // Add a click event listener to the "Book Now" button
+        document.querySelector('.book-button').addEventListener('click', () => {
+            const selectedDoctor = document.querySelector('select[name="doctor"]');
+            const patientName = document.querySelector('input[name="patientName"]').value;
+            const symptomCheckboxes = document.querySelectorAll('input[name="symptoms"]:checked');
+            const symptoms = Array.from(symptomCheckboxes).map(checkbox => checkbox.value).join(' '); // Join selected symptoms with spaces
+
+            // Extract the doctor's name and specialization
+            const doctorParts = selectedDoctor.value.split(' - ');
+            const doctorName = doctorParts[0];
+
+            // Send an HTTP POST request to book the appointment with the selected symptoms
+            fetch('/book_now', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ doctorName, patientName, symptoms }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('disease').textContent = data.disease;
+                    document.getElementById('recommended-medicine').textContent = data.recommendedMedicine;
+                    document.getElementById('appointment-result').style.display = 'block';
+                } else {
+                    alert('Failed to book the appointment. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error booking appointment:', error);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... (head section) -->
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, Doctor! {{ username }}</h1>
+        <p>Here are the available appointments for you:</p>
+        <ul>
+            {% for appointment in appointments %}
+                <li>
+                    Patient Name: {{ appointment[1] }}<br>
+                    Symptoms: {{ appointment[2] }}<br>
+                    Date: {{ appointment[4] }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
